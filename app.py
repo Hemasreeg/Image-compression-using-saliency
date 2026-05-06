@@ -23,6 +23,7 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 # Initialize Flask app
+# Version: 2.0 - Graceful model loading fallback
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
 
 # Configuration from environment variables (for Render deployment)
