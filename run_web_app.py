@@ -15,6 +15,12 @@ if __name__ == '__main__':
     init_db()
     print("\n✓ Database initialized")
     print("✓ Starting Flask server...")
-    print("\n🌐 Access the application at: http://localhost:5000")
+    
+    # Get port from environment variable (for Render deployment)
+    # Render sets the PORT environment variable
+    port = int(os.getenv('PORT', 5000))
+    debug = os.getenv('FLASK_ENV') == 'development'
+    
+    print(f"\n🌐 Access the application at: http://0.0.0.0:{port}")
     print("=" * 60 + "\n")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=debug, host='0.0.0.0', port=port)

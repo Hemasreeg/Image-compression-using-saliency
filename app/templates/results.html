@@ -1,0 +1,584 @@
+{% extends "base.html" %}
+
+{% block title %}Results - AI Portrait Mode{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1B211A 0%, #628141 50%, #8BAE66 100%);
+        min-height: 100vh;
+    }
+    
+    .results-page {
+        padding: 60px 0;
+    }
+    
+    .results-header {
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.95) 0%, rgba(98, 129, 65, 0.9) 100%);
+        border-radius: 25px;
+        padding: 50px;
+        margin-bottom: 40px;
+        text-align: center;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+    
+    .results-header h1 {
+        background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+    
+    .results-header p {
+        color: #8BAE66;
+        font-size: 1.2rem;
+    }
+    
+    .result-card {
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.9) 0%, rgba(98, 129, 65, 0.85) 100%);
+        border: 2px solid rgba(235, 213, 171, 0.2);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        transition: all 0.4s ease;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    .result-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(235, 213, 171, 0.5);
+        box-shadow: 0 20px 60px rgba(235, 213, 171, 0.2);
+    }
+    
+    .result-card h5 {
+        color: #8BAE66;
+        font-weight: 700;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .result-card img {
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        width: 100%;
+        height: auto;
+    }
+    
+    .btn-download {
+        background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%);
+        color: #1B211A;
+        font-weight: 700;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 30px;
+        transition: all 0.3s;
+        box-shadow: 0 5px 20px rgba(235, 213, 171, 0.3);
+    }
+    
+    .btn-download:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(235, 213, 171, 0.5);
+        color: #1B211A;
+    }
+    
+    .btn-secondary-custom {
+        background: rgba(235, 213, 171, 0.1);
+        color: #8BAE66;
+        font-weight: 600;
+        border: 2px solid rgba(235, 213, 171, 0.3);
+        border-radius: 12px;
+        padding: 12px 30px;
+        transition: all 0.3s;
+    }
+    
+    .btn-secondary-custom:hover {
+        background: rgba(235, 213, 171, 0.2);
+        border-color: rgba(235, 213, 171, 0.5);
+        color: #8BAE66;
+    }
+    
+    .effect-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-right: 10px;
+    }
+    
+    .badge-mask { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #8BAE66; }
+    .badge-duts { background: linear-gradient(135deg, #628141 0%, #1B211A 100%); color: #8BAE66; }
+    .badge-portrait { background: linear-gradient(135deg, #8d6830 0%, #b86830 100%); color: #8BAE66; }
+    .badge-blur { background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%); color: #1B211A; }
+    .badge-darken { background: linear-gradient(135deg, #111a10 0%, #1B211A 100%); color: #8BAE66; }
+    
+    .compression-card {
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.95) 0%, rgba(98, 129, 65, 0.9) 100%);
+        border: 3px solid rgba(139, 174, 102, 0.3);
+        border-radius: 25px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
+    }
+    
+    .compression-card h4 {
+        color: #8BAE66;
+        font-weight: 800;
+        margin-bottom: 15px;
+    }
+    
+    .compression-btn {
+        background: linear-gradient(135deg, rgba(139, 174, 102, 0.2) 0%, rgba(98, 129, 65, 0.2) 100%);
+        border: 2px solid rgba(139, 174, 102, 0.4);
+        color: #8BAE66;
+        padding: 20px 30px;
+        border-radius: 15px;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .compression-btn:hover {
+        border-color: #8BAE66;
+        background: linear-gradient(135deg, rgba(139, 174, 102, 0.3) 0%, rgba(98, 129, 65, 0.3) 100%);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(139, 174, 102, 0.3);
+        color: #8BAE66;
+    }
+    
+    .compression-btn.active {
+        background: linear-gradient(135deg, #8BAE66 0%, #628141 100%);
+        border-color: #8BAE66;
+        color: #1B211A;
+    }
+    
+    .compression-btn .badge {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(235, 213, 171, 0.2);
+        color: #8BAE66;
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border-radius: 8px;
+    }
+    
+    .compression-stats {
+        background: rgba(27, 33, 26, 0.6);
+        border-radius: 15px;
+        padding: 25px;
+        margin-top: 20px;
+        display: none;
+    }
+    
+    .stat-item {
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .stat-label {
+        color: #8BAE66;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+    
+    .stat-value {
+        color: #8BAE66;
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 10px 0;
+    }
+    
+    .compression-loader {
+        display: none;
+        text-align: center;
+        padding: 20px;
+    }
+    
+    .compression-loader .spinner-border {
+        width: 3rem;
+        height: 3rem;
+        border-width: 0.3em;
+        color: #8BAE66;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="results-page">
+    <div class="container">
+        <!-- Header -->
+        <div class="results-header">
+            <h1>
+                <i class="fas fa-check-circle me-3"></i>Processing Complete!
+            </h1>
+            <p>Your AI-enhanced portraits are ready</p>
+        </div>
+
+        <!-- Accuracy Score -->
+        <div class="row mb-4" id="accuracySection" style="display: none;">
+            <div class="col-12">
+                <div class="result-card text-center">
+                    <h5>
+                        <i class="fas fa-chart-line"></i>
+                        Prediction Accuracy
+                    </h5>
+                    <div class="p-4">
+                        <div class="d-flex justify-content-center align-items-center mb-3">
+                            <div class="display-4 fw-bold" style="color: #8BAE66;" id="accuracyValue">0%</div>
+                        </div>
+                        <div class="progress mx-auto" style="height: 25px; max-width: 600px; background: rgba(27, 33, 26, 0.5); border-radius: 15px;">
+                            <div id="accuracyBar" 
+                                 class="progress-bar" 
+                                 role="progressbar" 
+                                 style="width: 0%; background: linear-gradient(90deg, #628141 0%, #8BAE66 100%); border-radius: 15px; font-size: 14px; font-weight: 700; color: #1B211A;"
+                                 aria-valuenow="0" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100"></div>
+                        </div>
+                        <p class="mt-3 mb-0" style="color: #8BAE66;">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Model confidence in detecting the salient object
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smart Compression Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="compression-card">
+                    <div class="text-center mb-4">
+                        <h4>
+                            <i class="fas fa-compress-alt me-2"></i>
+                            Smart Image Compression
+                        </h4>
+                        <p style="color: #8BAE66; font-size: 1.1rem;">
+                            Reduce file size while keeping the object perfectly sharp!
+                        </p>
+                    </div>
+                    
+                    <!-- Compression Level Buttons -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <button class="compression-btn w-100 h-100" data-level="low" onclick="compressImage('low')">
+                                <span class="badge">~30-40%</span>
+                                <div class="mb-2">
+                                    <i class="fas fa-feather-alt fa-2x"></i>
+                                </div>
+                                <div style="font-size: 1.2rem;">Low Compression</div>
+                                <small class="d-block mt-2" style="opacity: 0.8;">Gentle • Minimal quality loss</small>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="compression-btn w-100 h-100" data-level="medium" onclick="compressImage('medium')">
+                                <span class="badge">~50-60%</span>
+                                <div class="mb-2">
+                                    <i class="fas fa-balance-scale fa-2x"></i>
+                                </div>
+                                <div style="font-size: 1.2rem;">Medium Compression</div>
+                                <small class="d-block mt-2" style="opacity: 0.8;">Balanced • Best for most uses</small>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="compression-btn w-100 h-100" data-level="high" onclick="compressImage('high')">
+                                <span class="badge">~70-80%</span>
+                                <div class="mb-2">
+                                    <i class="fas fa-rocket fa-2x"></i>
+                                </div>
+                                <div style="font-size: 1.2rem;">High Compression</div>
+                                <small class="d-block mt-2" style="opacity: 0.8;">Maximum • Smallest file size</small>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Loading Indicator -->
+                    <div class="compression-loader" id="compressionLoader">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Compressing...</span>
+                        </div>
+                        <p class="mt-3" style="color: #8BAE66; font-weight: 600;">
+                            <i class="fas fa-magic me-2"></i>Applying smart compression...
+                        </p>
+                    </div>
+                    
+                    <!-- Compression Statistics -->
+                    <div class="compression-stats" id="compressionStats">
+                        <div class="row">
+                            <div class="col-md-3 stat-item">
+                                <div class="stat-label">Original Size</div>
+                                <div class="stat-value" id="originalSize">-</div>
+                            </div>
+                            <div class="col-md-3 stat-item">
+                                <div class="stat-label">Compressed Size</div>
+                                <div class="stat-value" id="compressedSize">-</div>
+                            </div>
+                            <div class="col-md-3 stat-item">
+                                <div class="stat-label">Space Saved</div>
+                                <div class="stat-value" style="color: #8BAE66;" id="spaceSaved">-</div>
+                            </div>
+                            <div class="col-md-3 stat-item">
+                                <div class="stat-label">Reduction</div>
+                                <div class="stat-value" style="color: #8BAE66;" id="reductionPercent">-</div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-3">
+                            <a id="downloadCompressed" href="#" class="btn btn-download btn-lg px-5" download>
+                                <i class="fas fa-download me-2"></i>Download Compressed Image
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Original Image -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="result-card">
+                    <h5>
+                        <i class="fas fa-image"></i>
+                        Original Image
+                    </h5>
+                    <div class="text-center p-4">
+                        <img id="originalImage" src="" alt="Original" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Processed Results -->
+        <div class="row g-4" id="processedResults">
+            <!-- Results will be dynamically added here -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex gap-3 justify-content-center mt-5 flex-wrap">
+            <a href="{{ url_for('upload') }}" class="btn btn-download btn-lg px-5">
+                <i class="fas fa-redo me-2"></i>Process Another Image
+            </a>
+            <a href="{{ url_for('profile') }}" class="btn btn-secondary-custom btn-lg px-5">
+                <i class="fas fa-history me-2"></i>View Gallery
+            </a>
+            <a href="{{ url_for('home') }}" class="btn btn-secondary-custom btn-lg px-5">
+                <i class="fas fa-home me-2"></i>Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+let uploadId = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Get results from sessionStorage
+    const resultsData = sessionStorage.getItem('processResults');
+    
+    if (!resultsData) {
+        window.location.href = "{{ url_for('upload') }}";
+        return;
+    }
+    
+    const results = JSON.parse(resultsData);
+    
+    // Store upload_id for compression
+    uploadId = results.upload_id;
+    
+    // Display original image
+    document.getElementById('originalImage').src = results.original;
+    
+    // Display accuracy if available
+    if (results.accuracy && results.accuracy > 0) {
+        const accuracySection = document.getElementById('accuracySection');
+        const accuracyValue = document.getElementById('accuracyValue');
+        const accuracyBar = document.getElementById('accuracyBar');
+        
+        accuracySection.style.display = 'block';
+        accuracyValue.textContent = results.accuracy.toFixed(1) + '%';
+        accuracyBar.style.width = results.accuracy + '%';
+        accuracyBar.setAttribute('aria-valuenow', results.accuracy);
+        
+        // Animate progress bar
+        setTimeout(() => {
+            accuracyBar.textContent = results.accuracy.toFixed(1) + '%';
+        }, 500);
+    }
+    
+    // Effect type configurations
+    const effectTypes = {
+        mask: {
+            icon: 'fa-mask',
+            title: 'Saliency Mask',
+            color: 'badge-mask',
+            description: 'Binary detection mask'
+        },
+        duts: {
+            icon: 'fa-image',
+            title: 'DUTS Output',
+            color: 'badge-duts',
+            description: 'Grayscale saliency map'
+        },
+        portrait: {
+            icon: 'fa-portrait',
+            title: 'Portrait Effect',
+            color: 'badge-portrait',
+            description: 'Blur + darken background'
+        },
+        blur_only: {
+            icon: 'fa-wind',
+            title: 'Blur Only',
+            color: 'badge-blur',
+            description: 'Background blur effect'
+        },
+        darken_only: {
+            icon: 'fa-moon',
+            title: 'Darken Only',
+            color: 'badge-darken',
+            description: 'Background darkening'
+        }
+    };
+    
+    // Create result cards
+    const container = document.getElementById('processedResults');
+    
+    Object.keys(results).forEach(type => {
+        if (type !== 'original' && results[type]) {
+            const effect = effectTypes[type];
+            if (!effect) return;
+            
+            const col = document.createElement('div');
+            col.className = 'col-md-6';
+            
+            col.innerHTML = `
+                <div class="result-card">
+                    <h5>
+                        <i class="fas ${effect.icon}"></i>
+                        ${effect.title}
+                        <span class="effect-badge ${effect.color} ms-auto">${effect.description}</span>
+                    </h5>
+                    <div class="text-center p-3">
+                        <img src="${results[type]}" alt="${effect.title}" class="img-fluid mb-3">
+                        <div class="d-grid">
+                            <a href="${results[type]}" download class="btn btn-download">
+                                <i class="fas fa-download me-2"></i>Download ${effect.title}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(col);
+        }
+    });
+    
+    // Clear sessionStorage after displaying
+    // sessionStorage.removeItem('processResults');
+});
+
+// Smart Compression Function
+function compressImage(level) {
+    if (!uploadId) {
+        alert('Upload ID not found. Please process an image first.');
+        return;
+    }
+    
+    // Show loader
+    document.getElementById('compressionLoader').style.display = 'block';
+    document.getElementById('compressionStats').style.display = 'none';
+    
+    // Mark active button
+    document.querySelectorAll('.compression-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.querySelector(`[data-level="${level}"]`).classList.add('active');
+    
+    // Call compression API
+    fetch(`/compress/${uploadId}/${level}`)
+        .then(response => response.json())
+        .then(data => {
+            // Hide loader
+            document.getElementById('compressionLoader').style.display = 'none';
+            
+            if (data.success) {
+                // Display statistics
+                document.getElementById('originalSize').textContent = data.stats.original_size;
+                document.getElementById('compressedSize').textContent = data.stats.compressed_size;
+                document.getElementById('spaceSaved').textContent = data.stats.reduction;
+                document.getElementById('reductionPercent').textContent = data.stats.reduction_percent;
+                
+                // Set download link
+                const downloadBtn = document.getElementById('downloadCompressed');
+                downloadBtn.href = data.download_url;
+                downloadBtn.download = data.filename;
+                
+                // Show stats with animation
+                const statsDiv = document.getElementById('compressionStats');
+                statsDiv.style.display = 'block';
+                statsDiv.style.opacity = '0';
+                setTimeout(() => {
+                    statsDiv.style.transition = 'opacity 0.5s ease';
+                    statsDiv.style.opacity = '1';
+                }, 100);
+                
+                // Show success message
+                showToast('success', `Compression complete! Saved ${data.stats.reduction_percent}`);
+            } else {
+                showToast('error', data.error || 'Compression failed');
+            }
+        })
+        .catch(error => {
+            console.error('Compression error:', error);
+            document.getElementById('compressionLoader').style.display = 'none';
+            showToast('error', 'An error occurred during compression');
+        });
+}
+
+// Toast notification function
+function showToast(type, message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${type === 'success' ? 'linear-gradient(135deg, #8BAE66 0%, #628141 100%)' : 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)'};
+        color: ${type === 'success' ? '#1B211A' : '#fff'};
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        font-weight: 600;
+        z-index: 9999;
+        animation: slideIn 0.3s ease;
+    `;
+    toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>${message}`;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn {
+        from { transform: translateX(400px); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+        from { transform: translateX(0); opacity: 1; }
+        to { transform: translateX(400px); opacity: 0; }
+    }
+`;
+document.head.appendChild(style);
+</script>
+{% endblock %}

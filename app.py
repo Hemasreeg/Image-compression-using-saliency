@@ -24,9 +24,21 @@ from albumentations.pytorch import ToTensorV2
 
 # Initialize Flask app
 app = Flask(__name__, template_folder='app/templates', static_folder='app/static')
-app.config['SECRET_KEY'] = 'your-secret-key-change-this-in-production'
-app.config['GOOGLE_API_KEY'] = 'AIzaSyAXif7cBJUtqmwNnHRNENmlPVfdknNX26I'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portrait_app.db'
+
+# Configuration from environment variables (for Render deployment)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-secret-key-change-in-production')
+app.config['GOOGLE_API_KEY'] = os.getenv('GOOGLE_API_KEY', '')
+
+# Database configuration - use PostgreSQL on Render, SQLite locally
+database_url = os.getenv('DATABASE_URL')
+if database_url:
+    # Fix PostgreSQL URL format for SQLAlchemy
+    if database_url.startswith('postgres://'):
+        database_url = database_url.replace('postgres://', 'postgresql://', 1)
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///portrait_app.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'app/static/uploads'
 app.config['RESULT_FOLDER'] = 'app/static/results'

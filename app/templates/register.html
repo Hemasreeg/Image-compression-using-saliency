@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+
+{% block title %}Register - AI Portrait Mode{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1B211A 0%, #628141 50%, #8BAE66 100%);
+        min-height: 100vh;
+    }
+    .auth-card {
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.95) 0%, rgba(98, 129, 65, 0.9) 100%);
+        border-radius: 25px;
+        border: 2px solid rgba(235, 213, 171, 0.2);
+    }
+    .auth-card h2 {
+        color: #8BAE66;
+    }
+    .auth-card p {
+        color: #EBD5AB;
+    }
+    .form-label {
+        color: #8BAE66 !important;
+    }
+    .form-text {
+        color: #EBD5AB !important;
+    }
+    .form-control {
+        background: rgba(235, 213, 171, 0.05);
+        border: 1px solid rgba(235, 213, 171, 0.3);
+        color: #EBD5AB;
+    }
+    .form-control:focus {
+        background: rgba(235, 213, 171, 0.1);
+        border-color: #8BAE66;
+        color: #EBD5AB;
+        box-shadow: 0 0 0 0.25rem rgba(235, 213, 171, 0.25);
+    }
+    .form-control::placeholder {
+        color: rgba(176, 176, 118, 0.5);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%);
+        border: none;
+        color: #1B211A;
+        font-weight: 700;
+    }
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%);
+        color: #1B211A;
+    }
+    .btn-outline-secondary {
+        border-color: rgba(235, 213, 171, 0.3);
+        color: #8BAE66;
+    }
+    .btn-outline-secondary:hover {
+        background: rgba(235, 213, 171, 0.1);
+        border-color: #8BAE66;
+        color: #8BAE66;
+    }
+    .invalid-feedback {
+        color: #ff6b6b !important;
+    }
+    a {
+        color: #8BAE66;
+    }
+    a:hover {
+        color: #EBD5AB;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="auth-card p-5 shadow-lg">
+                <div class="text-center mb-4">
+                    <i class="fas fa-user-plus fa-3x mb-3" style="color: #8BAE66;"></i>
+                    <h2 class="fw-bold">Create Account</h2>
+                    <p>Join AI Portrait Mode today</p>
+                </div>
+
+                <form method="POST" action="{{ url_for('register') }}" id="registerForm">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user me-1"></i>Username
+                        </label>
+                        <input type="text" 
+                               class="form-control form-control-lg" 
+                               id="username" 
+                               name="username" 
+                               placeholder="Choose a username"
+                               minlength="3"
+                               maxlength="20"
+                               required 
+                               autofocus>
+                        <div class="form-text">3-20 characters, letters and numbers only</div>
+                        <div class="invalid-feedback">
+                            Username must be 3-20 characters.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope me-1"></i>Email Address
+                        </label>
+                        <input type="email" 
+                               class="form-control form-control-lg" 
+                               id="email" 
+                               name="email" 
+                               placeholder="your.email@example.com"
+                               required>
+                        <div class="invalid-feedback">
+                            Please enter a valid email address.
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock me-1"></i>Password
+                        </label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   class="form-control form-control-lg" 
+                                   id="password" 
+                                   name="password" 
+                                   placeholder="Create a strong password"
+                                   minlength="8"
+                                   required>
+                            <button class="btn btn-outline-secondary" 
+                                    type="button" 
+                                    id="togglePassword">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="form-text">Minimum 8 characters</div>
+                        <div id="passwordStrength" class="mt-2"></div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="confirmPassword" class="form-label">
+                            <i class="fas fa-lock me-1"></i>Confirm Password
+                        </label>
+                        <input type="password" 
+                               class="form-control form-control-lg" 
+                               id="confirmPassword" 
+                               name="confirmPassword" 
+                               placeholder="Re-enter your password"
+                               required>
+                        <div class="invalid-feedback" id="passwordMismatch">
+                            Passwords do not match.
+                        </div>
+                    </div>
+
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="acceptTerms" required>
+                        <label class="form-check-label text-muted" for="acceptTerms">
+                            I agree to the Terms of Service and Privacy Policy
+                        </label>
+                    </div>
+
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-rocket me-2"></i>Create Account
+                        </button>
+                    </div>
+
+                    <div class="text-center">
+                        <p class="text-muted mb-0">
+                            Already have an account? 
+                            <a href="{{ url_for('login') }}" class="text-primary fw-bold text-decoration-none">
+                                Login here
+                            </a>
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Toggle password visibility
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        const passwordInput = document.getElementById('password');
+        const icon = this.querySelector('i');
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+    });
+
+    // Password strength indicator
+    document.getElementById('password').addEventListener('input', function() {
+        const password = this.value;
+        const strengthDiv = document.getElementById('passwordStrength');
+        
+        let strength = 0;
+        if (password.length >= 8) strength++;
+        if (password.match(/[a-z]+/)) strength++;
+        if (password.match(/[A-Z]+/)) strength++;
+        if (password.match(/[0-9]+/)) strength++;
+        if (password.match(/[^a-zA-Z0-9]+/)) strength++;
+        
+        let strengthText = '';
+        let strengthClass = '';
+        
+        if (strength <= 2) {
+            strengthText = 'Weak';
+            strengthClass = 'text-danger';
+        } else if (strength <= 3) {
+            strengthText = 'Medium';
+            strengthClass = 'text-warning';
+        } else {
+            strengthText = 'Strong';
+            strengthClass = 'text-success';
+        }
+        
+        strengthDiv.innerHTML = `<small class="${strengthClass}">Password strength: ${strengthText}</small>`;
+    });
+
+    // Form validation
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const confirmInput = document.getElementById('confirmPassword');
+        
+        if (password !== confirmPassword) {
+            e.preventDefault();
+            confirmInput.classList.add('is-invalid');
+        } else {
+            confirmInput.classList.remove('is-invalid');
+        }
+    });
+
+    // Real-time password match check
+    document.getElementById('confirmPassword').addEventListener('input', function() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = this.value;
+        
+        if (confirmPassword && password !== confirmPassword) {
+            this.classList.add('is-invalid');
+        } else {
+            this.classList.remove('is-invalid');
+        }
+    });
+</script>
+{% endblock %}

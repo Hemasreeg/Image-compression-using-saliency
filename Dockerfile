@@ -23,12 +23,13 @@ COPY . .
 # Create necessary directories
 RUN mkdir -p app/static/uploads app/static/results models
 
-# Expose port
+# Expose port (Render will override with PORT env variable)
 EXPOSE 5000
 
 # Set environment variables
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
+ENV PORT=5000
 
-# Run application
-CMD ["python", "app.py"]
+# Run application using the wrapper
+CMD ["python", "run_web_app.py"]

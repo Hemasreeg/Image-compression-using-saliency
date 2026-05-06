@@ -1,0 +1,191 @@
+{% extends "base.html" %}
+
+{% block title %}AI Portrait Mode - Advanced Object Detection{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1B211A 0%, #628141 50%, #8BAE66 100%);
+    }
+    
+    .hero-section {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #1B211A 0%, #628141 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section text-center py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 text-lg-start">
+                <h1 class="display-3 fw-bold mb-4 animate-fade-in">
+                    AI-Powered <span style="color: #8BAE66;">Portrait Mode</span>
+                </h1>
+                <p class="lead mb-4" style="color: #EBD5AB;">
+                    Professional background blur and removal using cutting-edge U2-Net deep learning technology. 
+                    Achieve 90%+ accuracy in salient object detection.
+                </p>
+                <div class="d-grid gap-2 d-md-block">
+                    <a href="{{ url_for('register') }}" class="btn btn-lg px-5 me-md-2" style="background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%); color: #1B211A; font-weight: 700; border-radius: 15px; box-shadow: 0 10px 30px rgba(235, 213, 171, 0.3);">
+                        <i class="fas fa-rocket me-2"></i>Get Started
+                    </a>
+                    <a href="#features" class="btn btn-lg px-5" style="background: rgba(235, 213, 171, 0.1); color: #8BAE66; font-weight: 700; border: 2px solid rgba(235, 213, 171, 0.3); border-radius: 15px;">
+                        <i class="fas fa-info-circle me-2"></i>Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 mt-5 mt-lg-0">
+                <div class="hero-image-container">
+                    <i class="fas fa-brain fa-10x" style="color: rgba(235, 213, 171, 0.3);"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section id="features" class="py-5" style="background: rgba(27, 33, 26, 0.95);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold" style="color: #8BAE66;">Powerful Features</h2>
+            <p style="color: #EBD5AB;">Everything you need for professional portrait effects</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-brain fa-3x" style="color: #8BAE66;"></i>
+                    </div>
+                    <h4 style="color: #8BAE66;">U2-Net AI Model</h4>
+                    <p class="text-muted">
+                        State-of-the-art deep learning with 44M parameters, achieving 90%+ F1 score on DUTS benchmark dataset.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-magic fa-3x" style="color: #8BAE66;"></i>
+                    </div>
+                    <h4 style="color: #8BAE66;">Multiple Effects</h4>
+                    <p style="color: #EBD5AB;">
+                        Choose from saliency masks, DUTS output, portrait blur, background darkening, or complete removal.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-camera fa-3x" style="color: #8BAE66;"></i>
+                    </div>
+                    <h4 style="color: #8BAE66;">Camera Capture</h4>
+                    <p style="color: #EBD5AB;">
+                        Take photos directly from your device camera or upload existing images. Supports multiple formats.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-history fa-3x" style="color: #8BAE66;"></i>
+                    </div>
+                    <h4 style="color: #8BAE66;">Upload History</h4>
+                    <p style="color: #EBD5AB;">
+                        Track all your processed images with timestamps. Download or delete anytime from your profile.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-tachometer-alt fa-3x" style="color: #8BAE66;"></i>
+                    </div>
+                    <h4 style="color: #8BAE66;">Fast Processing</h4>
+                    <p style="color: #EBD5AB;">
+                        GPU-accelerated inference with mixed precision. Process high-resolution images in seconds.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="feature-card text-center p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-user-shield fa-3x" style="color: #8BAE66;"></i>
+                    </div>
+                    <h4 style="color: #8BAE66;">Secure & Private</h4>
+                    <p style="color: #EBD5AB;">
+                        Encrypted passwords with Bcrypt. Your images are stored securely and accessible only to you.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5" style="background: rgba(27, 33, 26, 0.95);">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold" style="color: #8BAE66;">How It Works</h2>
+            <p style="color: #EBD5AB;">Simple 3-step process to amazing results</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="step-card text-center p-4">
+                    <div class="step-number mb-3" style="background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%); color: #1B211A;">1</div>
+                    <h4 style="color: #8BAE66;">Upload or Capture</h4>
+                    <p style="color: #EBD5AB;">
+                        Upload an image from your device or use your camera to capture a new photo.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="step-card text-center p-4">
+                    <div class="step-number mb-3" style="background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%); color: #1B211A;">2</div>
+                    <h4 style="color: #8BAE66;">Select Effect</h4>
+                    <p style="color: #EBD5AB;">
+                        Choose from portrait blur, background removal, saliency mask, or DUTS output.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-4">
+                <div class="step-card text-center p-4">
+                    <div class="step-number mb-3" style="background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%); color: #1B211A;">3</div>
+                    <h4 style="color: #8BAE66;">Download Result</h4>
+                    <p style="color: #EBD5AB;">
+                        Get your professionally processed image instantly. Save to your device.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5" style="background: rgba(27, 33, 26, 0.95);">
+    <div class="container">
+        <div class="cta-card text-center p-5" style="background: linear-gradient(135deg, rgba(235, 213, 171, 0.3) 0%, rgba(98, 129, 65, 0.2) 100%); border: 2px solid rgba(235, 213, 171, 0.2); border-radius: 20px;">
+            <h2 class="display-5 fw-bold mb-4" style="color: #8BAE66;">Ready to Transform Your Photos?</h2>
+            <p class="lead mb-4" style="color: #EBD5AB;">
+                Join now and experience professional AI-powered portrait effects.
+            </p>
+            <a href="{{ url_for('register') }}" class="btn btn-lg px-5" style="background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%); color: #1B211A; font-weight: 700; border-radius: 15px; box-shadow: 0 10px 30px rgba(235, 213, 171, 0.3);">
+                <i class="fas fa-user-plus me-2"></i>Create Free Account
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,290 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AI Portrait Mode{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #1B211A 0%, #628141 50%, #8BAE66 100%);
+        min-height: 100vh;
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.95) 0%, rgba(98, 129, 65, 0.9) 100%);
+        border-radius: 30px;
+        padding: 80px 40px;
+        margin-bottom: 50px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, rgba(235, 213, 171, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #8BAE66 0%, #EBD5AB 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 20px;
+        letter-spacing: -2px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .hero-subtitle {
+        color: #EBD5AB;
+        font-size: 1.4rem;
+        font-weight: 300;
+        margin-bottom: 40px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .action-cards-container {
+        margin-bottom: 50px;
+    }
+    
+    .elegant-card {
+        background: linear-gradient(135deg, rgba(235, 213, 171, 0.15) 0%, rgba(98, 129, 65, 0.1) 100%);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(235, 213, 171, 0.2);
+        border-radius: 25px;
+        padding: 40px;
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .elegant-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(235, 213, 171, 0.2), transparent);
+        transition: left 0.7s;
+    }
+    
+    .elegant-card:hover::before {
+        left: 100%;
+    }
+    
+    .elegant-card:hover {
+        transform: translateY(-10px);
+        border-color: rgba(235, 213, 171, 0.5);
+        box-shadow: 0 20px 60px rgba(235, 213, 171, 0.2);
+    }
+    
+    .card-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .emerald-icon {
+        background: linear-gradient(135deg, #1B211A 0%, #628141 100%);
+        box-shadow: 0 10px 30px rgba(98, 129, 65, 0.4);
+    }
+    
+    .earth-icon {
+        background: linear-gradient(135deg, #8d6830 0%, #b86830 100%);
+        box-shadow: 0 10px 30px rgba(141, 104, 48, 0.4);
+    }
+    
+    .card-title {
+        color: #8BAE66;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .card-description {
+        color: #8BAE66;
+        font-size: 1.1rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .guide-section {
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.9) 0%, rgba(98, 129, 65, 0.85) 100%);
+        border-radius: 30px;
+        padding: 50px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+    }
+    
+    .guide-title {
+        color: #8BAE66;
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 40px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .accordion-item {
+        background: rgba(235, 213, 171, 0.05);
+        border: 1px solid rgba(235, 213, 171, 0.15);
+        border-radius: 15px !important;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+    
+    .accordion-button {
+        background: linear-gradient(135deg, rgba(98, 129, 65, 0.3) 0%, rgba(141, 144, 118, 0.2) 100%);
+        color: #8BAE66;
+        font-size: 1.2rem;
+        font-weight: 600;
+        border: none;
+        padding: 25px 30px;
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background: linear-gradient(135deg, rgba(235, 213, 171, 0.2) 0%, rgba(235, 213, 171, 0.15) 100%);
+        color: #8BAE66;
+        box-shadow: none;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: 0 0 0 3px rgba(235, 213, 171, 0.2);
+        border-color: transparent;
+    }
+    
+    .accordion-button::after {
+        filter: brightness(0) invert(0.8);
+    }
+    
+    .accordion-body {
+        background: rgba(27, 33, 26, 0.5);
+        color: #8BAE66;
+        padding: 30px;
+        font-size: 1.05rem;
+    }
+    
+    .accordion-body h5 {
+        color: #8BAE66;
+        margin-bottom: 20px;
+    }
+    
+    .accordion-body a {
+        color: #8BAE66;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(235, 213, 171, 0.3);
+        transition: all 0.3s;
+    }
+    
+    .accordion-body a:hover {
+        color: #8BAE66;
+        border-bottom-color: #8BAE66;
+    }
+    
+    .badge {
+        padding: 10px 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .bg-emerald { background: linear-gradient(135deg, #1B211A 0%, #628141 100%); }
+    .bg-wasabi { background: linear-gradient(135deg, #6d9076 0%, #8c9c78 100%); }
+    .bg-khaki { background: linear-gradient(135deg, #8BAE66 0%, #f8e7b0 100%); color: #1B211A; }
+    .bg-earth { background: linear-gradient(135deg, #8d6830 0%, #b86830 100%); }
+    
+    .alert {
+        border-radius: 15px;
+        border: 1px solid rgba(235, 213, 171, 0.3);
+        background: rgba(235, 213, 171, 0.1);
+        color: #8BAE66;
+    }
+    
+    code {
+        background: rgba(235, 213, 171, 0.15);
+        color: #8BAE66;
+        padding: 3px 8px;
+        border-radius: 5px;
+        font-size: 0.95em;
+    }
+    
+    @media (max-width: 768px) {
+        .hero-title { font-size: 2.5rem; }
+        .hero-subtitle { font-size: 1.1rem; }
+        .guide-section { padding: 30px 20px; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Header -->
+    <div class="hero-section text-center">
+        <h1 class="hero-title">
+            Welcome, {{ current_user.username }}
+        </h1>
+        <p class="hero-subtitle">
+            Transform your portraits with AI-powered artistry
+        </p>
+        <div class="d-flex gap-3 justify-content-center flex-wrap">
+            <a href="{{ url_for('upload') }}" class="btn btn-lg px-5 py-3" style="background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%); color: #1B211A; font-weight: 700; border: none; border-radius: 15px; box-shadow: 0 10px 30px rgba(235, 213, 171, 0.3);">
+                <i class="fas fa-magic me-2"></i>Start Creating
+            </a>
+            <a href="{{ url_for('profile') }}" class="btn btn-lg px-5 py-3" style="background: rgba(235, 213, 171, 0.1); color: #8BAE66; font-weight: 700; border: 2px solid rgba(235, 213, 171, 0.3); border-radius: 15px;">
+                <i class="fas fa-history me-2"></i>View Gallery
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="action-cards-container">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <a href="{{ url_for('upload') }}" class="text-decoration-none">
+                    <div class="elegant-card">
+                        <div class="card-icon emerald-icon">
+                            <i class="fas fa-camera fa-2x" style="color: #8BAE66;"></i>
+                        </div>
+                        <h3 class="card-title">Create Portrait</h3>
+                        <p class="card-description">
+                            Upload or capture images and apply stunning AI-powered effects with professional precision
+                        </p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col-md-6">
+                <a href="{{ url_for('profile') }}" class="text-decoration-none">
+                    <div class="elegant-card">
+                        <div class="card-icon earth-icon">
+                            <i class="fas fa-images fa-2x" style="color: #8BAE66;"></i>
+                        </div>
+                        <h3 class="card-title">Your Gallery</h3>
+                        <p class="card-description">
+                            Access your complete collection of processed images with full history and download options
+                        </p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

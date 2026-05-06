@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+
+{% block title %}Upload - AI Portrait Mode{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-page {
+        background: linear-gradient(135deg, #1B211A 0%, #628141 50%, #8BAE66 100%);
+        min-height: 100vh;
+        padding: 40px 0;
+    }
+    
+    .drop-zone {
+        border: 3px dashed rgba(235, 213, 171, 0.4);
+        border-radius: 20px;
+        padding: 60px 30px;
+        text-align: center;
+        transition: all 0.4s ease;
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.7) 0%, rgba(98, 129, 65, 0.6) 100%);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .drop-zone::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(235, 213, 171, 0.15) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s;
+    }
+    
+    .drop-zone:hover::before {
+        opacity: 1;
+    }
+    
+    .drop-zone.dragover {
+        border-color: #8BAE66;
+        background: linear-gradient(135deg, rgba(235, 213, 171, 0.2) 0%, rgba(235, 213, 171, 0.15) 100%);
+        transform: scale(1.03);
+        box-shadow: 0 15px 40px rgba(235, 213, 171, 0.3);
+    }
+    
+    .drop-zone i {
+        color: #8BAE66;
+        filter: drop-shadow(0 4px 8px rgba(235, 213, 171, 0.3));
+    }
+    
+    .drop-zone h3 {
+        color: #8BAE66;
+        font-weight: 700;
+    }
+    
+    .drop-zone p {
+        color: #8BAE66;
+    }
+    
+    .card-body {
+        background: rgba(27, 33, 26, 0.3);
+    }
+    
+    h5, h6 {
+        color: #8BAE66 !important;
+    }
+    
+    .text-muted {
+        color: #8BAE66 !important;
+    }
+    
+    label {
+        color: #8BAE66;
+    }
+    
+    .form-label {
+        color: #8BAE66 !important;
+    }
+    
+    #blurValue {
+        color: #8BAE66;
+    }
+    
+    .preview-container {
+        position: relative;
+        display: inline-block;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    
+    .preview-container img {
+        max-width: 100%;
+        border-radius: 15px;
+        transition: transform 0.3s;
+    }
+    
+    .preview-container:hover img {
+        transform: scale(1.05);
+    }
+    
+    .remove-preview {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        color: #1B211A;
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .remove-preview:hover {
+        transform: rotate(90deg) scale(1.1);
+        box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+    }
+    
+    .effect-option {
+        transition: all 0.3s;
+    }
+    
+    .effect-option input:checked + label .p-3 {
+        background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%);
+        color: #1B211A;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(235, 213, 171, 0.4);
+        border-color: #8BAE66;
+    }
+    
+    .effect-option label {
+        cursor: pointer;
+    }
+    
+    .effect-option .p-3 {
+        transition: all 0.3s;
+        background: rgba(235, 213, 171, 0.05);
+        border: 1px solid rgba(235, 213, 171, 0.2);
+    }
+    
+    .effect-option .p-3:hover {
+        background: rgba(235, 213, 171, 0.1);
+        border-color: rgba(235, 213, 171, 0.4);
+        transform: translateY(-3px);
+    }
+    
+    .effect-option i {
+        color: #8BAE66;
+    }
+    
+    .effect-option h6 {
+        color: #8BAE66;
+    }
+    
+    .effect-option small {
+        color: #8BAE66;
+    }
+    
+    .processing-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(27, 33, 26, 0.97) 0%, rgba(98, 129, 65, 0.97) 100%);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+        backdrop-filter: blur(10px);
+    }
+    
+    .processing-content {
+        text-align: center;
+        color: #8BAE66;
+    }
+    
+    .processing-spinner {
+        font-size: 5rem;
+        color: #8BAE66;
+        animation: spin 1s linear infinite;
+        filter: drop-shadow(0 0 20px rgba(255,255,255,0.5));
+    }
+    
+    @keyframes spin {
+        100% { transform: rotate(360deg); }
+    }
+    
+    .btn-gradient {
+        background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%);
+        border: none;
+        transition: all 0.3s;
+        color: #1B211A;
+        font-weight: 700;
+    }
+    
+    .btn-gradient:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(235, 213, 171, 0.4);
+        color: #1B211A;
+    }
+    
+    .form-range::-webkit-slider-thumb {
+        background: linear-gradient(135deg, #8BAE66 0%, #8BAE66 100%);
+    }
+    
+    .form-range::-moz-range-thumb {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="upload-page">
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Upload Card -->
+                <div class="card shadow-lg border-0" style="border-radius: 25px; overflow: hidden; background: linear-gradient(135deg, rgba(27, 33, 26, 0.95) 0%, rgba(98, 129, 65, 0.9) 100%); border: 2px solid rgba(235, 213, 171, 0.2);">
+                    <div class="card-header py-4" style="background: linear-gradient(135deg, #1B211A 0%, #628141 100%);">
+                        <h3 class="mb-0 text-center" style="color: #8BAE66;">
+                            <i class="fas fa-magic me-2"></i>AI-Powered Portrait Mode
+                        </h3>
+                        <p class="mb-0 text-center" style="color: #8BAE66;">Upload your image and let AI create stunning effects</p>
+                    </div>
+                    <h2 class="mb-0 text-center">
+                        <i class="fas fa-magic me-2"></i>
+                        Upload & Process Image
+                    </h2>
+                </div>
+                
+                <div class="card-body p-5">
+                    <form id="uploadForm" enctype="multipart/form-data">
+                        <!-- Drop Zone -->
+                        <div class="drop-zone" id="dropZone">
+                            <i class="fas fa-cloud-upload-alt fa-5x mb-4"></i>
+                            <h3 class="fw-bold">Drag & Drop Images Here</h3>
+                            <p class="text-muted mb-4">Select single or multiple images</p>
+                            <input type="file" 
+                                   id="fileInput" 
+                                   name="file" 
+                                   accept="image/*" 
+                                   class="d-none">
+                            <button type="button" 
+                                    class="btn btn-gradient btn-lg me-2 px-5" 
+                                    onclick="document.getElementById('fileInput').click(); event.stopPropagation();">
+                                <i class="fas fa-folder-open me-2"></i>Browse Files
+                            </button>
+                            <button type="button" 
+                                    id="cameraBtn"
+                                    class="btn btn-lg px-5" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#cameraModal"
+                                    style="background: rgba(235, 213, 171, 0.1); color: #8BAE66; font-weight: 700; border: 2px solid rgba(235, 213, 171, 0.3); border-radius: 15px;">
+                                <i class="fas fa-camera me-2"></i>Use Camera
+                            </button>
+                            <p class="text-muted mt-4 mb-0 small">
+                                <i class="fas fa-info-circle me-1"></i>Supported: JPG, PNG, GIF, BMP (Max 16MB)
+                            </p>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div id="previewSection" class="mt-4 text-center d-none">
+                            <h5 class="mb-3">Image Preview</h5>
+                            <div class="preview-container">
+                                <img id="imagePreview" src="" alt="Preview">
+                                <button type="button" class="remove-preview" id="removePreview">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Effect Options -->
+                        <div id="optionsSection" class="mt-5 d-none">
+                            <h5 class="mb-4">
+                                <i class="fas fa-sliders-h me-2"></i>Select Effect
+                            </h5>
+                            
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <div class="form-check effect-option">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               name="output_effects" 
+                                               id="mask" 
+                                               value="mask">
+                                        <label class="form-check-label w-100" for="mask">
+                                            <div class="p-3 border rounded hover-effect">
+                                                <i class="fas fa-mask fa-2x text-primary mb-2"></i>
+                                                <h6>Saliency Mask</h6>
+                                                <small class="text-muted">Binary detection mask</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-check effect-option">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               name="output_effects" 
+                                               id="duts" 
+                                               value="duts">
+                                        <label class="form-check-label w-100" for="duts">
+                                            <div class="p-3 border rounded hover-effect">
+                                                <i class="fas fa-image fa-2x text-success mb-2"></i>
+                                                <h6>DUTS Output</h6>
+                                                <small class="text-muted">Grayscale saliency map</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4">
+                                    <div class="form-check effect-option">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               name="output_effects" 
+                                               id="portrait" 
+                                               value="portrait">
+                                        <label class="form-check-label w-100" for="portrait">
+                                            <div class="p-3 border rounded hover-effect">
+                                                <i class="fas fa-portrait fa-2x text-danger mb-2"></i>
+                                                <h6>Portrait Effect</h6>
+                                                <small class="text-muted">Blur + darken background</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-check effect-option">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               name="output_effects" 
+                                               id="blur_only" 
+                                               value="blur_only">
+                                        <label class="form-check-label w-100" for="blur_only">
+                                            <div class="p-3 border rounded hover-effect">
+                                                <i class="fas fa-wind fa-2x text-warning mb-2"></i>
+                                                <h6>Blur Only</h6>
+                                                <small class="text-muted">Only blur background</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-check effect-option">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               name="output_effects" 
+                                               id="darken_only" 
+                                               value="darken_only">
+                                        <label class="form-check-label w-100" for="darken_only">
+                                            <div class="p-3 border rounded hover-effect">
+                                                <i class="fas fa-moon fa-2x text-info mb-2"></i>
+                                                <h6>Darken Only</h6>
+                                                <small class="text-muted">Only darken background</small>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Blur Strength Slider -->
+                            <div class="mt-4" id="blurSettings">
+                                <label for="blurStrength" class="form-label">
+                                    <i class="fas fa-adjust me-2"></i>
+                                    Blur Strength: <span id="blurValue">15</span>
+                                </label>
+                                <input type="range" 
+                                       class="form-range" 
+                                       min="1" 
+                                       max="30" 
+                                       value="15" 
+                                       id="blurStrength" 
+                                       name="blur_strength">
+                            </div>
+
+                            <!-- Process Button -->
+                            <div class="d-grid mt-4">
+                                <button type="submit" class="btn btn-gradient btn-lg py-3" id="processBtn">
+                                    <i class="fas fa-magic me-2"></i>Process Image with AI
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Results Section -->
+                    <div id="resultsSection" class="mt-5 d-none">
+                        <div class="text-center mb-4">
+                            <h3 class="text-success">
+                                <i class="fas fa-check-circle me-2"></i>Processing Complete!
+                            </h3>
+                            <p class="text-muted">Your AI-processed images are ready</p>
+                        </div>
+                        
+                        <!-- Original Image -->
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <div class="result-card card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-image me-2"></i>Original Image</h5>
+                                    </div>
+                                    <div class="card-body text-center p-4">
+                                        <img id="originalResult" src="" alt="Original" class="img-fluid rounded shadow">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Processed Results Grid -->
+                        <div class="row g-4" id="processedResults">
+                            <!-- Results will be dynamically added here -->
+                        </div>
+
+                        <div class="d-grid gap-3 d-md-flex justify-content-md-center mt-5">
+                            <button type="button" class="btn btn-gradient btn-lg px-5" onclick="location.reload()">
+                                <i class="fas fa-redo me-2"></i>Process Another Image
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Camera Modal -->
+<div class="modal fade" id="cameraModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-camera me-2"></i>Capture Photo
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="video-container mb-3">
+                    <video id="cameraVideo" autoplay playsinline></video>
+                    <canvas id="cameraCanvas" class="d-none"></canvas>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="button" class="btn btn-primary btn-lg" id="captureBtn">
+                        <i class="fas fa-camera me-2"></i>Capture Photo
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Processing Overlay -->
+<div class="processing-overlay" id="processingOverlay">
+    <div class="processing-content">
+        <div class="processing-spinner">
+            <i class="fas fa-cog"></i>
+        </div>
+        <h2 class="mt-4 mb-2 fw-bold" style="color: #8BAE66;">Processing Your Image...</h2>
+        <p class="fs-5" style="color: #8BAE66;">AI is working its magic ✨</p>
+        <div class="mt-4">
+            <div class="spinner-grow me-2" style="color: #8BAE66;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow me-2" style="color: #8BAE66;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <div class="spinner-grow" style="color: #8BAE66;" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/camera.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}?v=2"></script>
+{% endblock %}
