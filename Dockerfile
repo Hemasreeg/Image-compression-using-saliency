@@ -1,14 +1,17 @@
 # Dockerfile for AI Portrait Mode Web Application
 
-FROM python:3.10-slim
+FROM python:3.10
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
+# Install system dependencies (needed for OpenCV and image processing)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements first (for better caching)
