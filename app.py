@@ -167,13 +167,17 @@ class AIPortraitProcessor:
                 print(f"   ✗ Failed to load {model_path}: {e}")
         
         if loaded_count == 0:
-            raise ValueError("No models loaded. Please ensure model files exist.")
-        
-        print(f"\n{'='*60}")
-        print(f"✅ Loaded {loaded_count} model(s) successfully")
-        if self.use_ensemble and loaded_count > 1:
-            print(f"🎯 Ensemble mode: Averaging predictions from {loaded_count} models")
-        print(f"{'='*60}\n")
+            print(f"\n{'='*60}")
+            print("⚠️  WARNING: No models loaded!")
+            print("   The app will start, but AI features will not work until models are available.")
+            print("   Please train a model or download pre-trained models.")
+            print(f"{'='*60}\n")
+        else:
+            print(f"\n{'='*60}")
+            print(f"✅ Loaded {loaded_count} model(s) successfully")
+            if self.use_ensemble and loaded_count > 1:
+                print(f"🎯 Ensemble mode: Averaging predictions from {loaded_count} models")
+            print(f"{'='*60}\n")
     
     def predict_mask(self, image_path):
         """Predict saliency mask using ensemble of models"""
@@ -322,12 +326,20 @@ model_paths = [
 # Filter to only existing models
 available_models = [path for path in model_paths if os.path.exists(path)]
 
-if not available_models:
-    print("⚠️  WARNING: No models found! Please train a model first.")
-    available_models = ['models/best_model.pth']  # Fallback
-
-print(f"\n🤖 Initializing AI Portrait Processor with {len(available_models)} model(s)")
-ai_processor = AIPortraitProcessor(model_paths=available_models, use_ensemble=True)
+print(f"\n🤖 Initializing AI Portrait Processor...")
+try:
+    if not available_models:
+        # Create processor without models - it will warn but not crash
+        ai_processor = AIPortraitProcessor(model_paths=['models/best_model.pth'], use_ensemble=True)
+    else:
+        ai_processor = AIPortraitProcessor(model_paths=available_models, use_ensemble=True)
+except Exception as e:
+    print(f"⚠️  Error initializing processor: {e}")
+    print("   App will continue to run. Models can be uploaded/trained later.")
+    # Create a dummy processor with no models
+    class DummyProcessor:
+        models = []
+    ai_processor = DummyProcessor()
 
 
 # ============================================================================
@@ -338,6 +350,11 @@ def allowed_file(filename):
     """Check if file extension is allowed"""
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+
+
+def models_available():
+    """Check if AI models are loaded and available"""
+    return hasattr(ai_processor, 'models') and len(ai_processor.models) > 0
 
 
 # ============================================================================
@@ -486,6 +503,11 @@ def upload():
                         }
                     })
                 
+                # Check if models are available
+                if not models_available():
+                    flash('⚠️ AI models are not loaded. Please upload model files or train a model.', 'warning')
+                    return redirect(url_for('upload'))
+                
                 results = ai_processor.process_image(
                     filepath,
                     output_effects=output_effects if output_effects else ['mask', 'portrait', 'duts'],
@@ -623,6 +645,10 @@ def compress_image(upload_id, level):
         return jsonify({'error': 'Unauthorized'}), 403
     
     try:
+        # Check if models are available
+        if not models_available():
+            return jsonify({'error': 'AI models not loaded. Please upload model files.'}), 503
+        
         # Get paths
         original_path = upload.original_path
         mask_path = upload.mask_path
